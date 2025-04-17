@@ -1,0 +1,51 @@
+package stepDefs;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class Hooks {
+
+    public static WebDriver webDriver;
+
+    @Before
+    public void beforeScenario(Scenario scenario) {
+        String browser = System.getProperty("browser", "chrome").toLowerCase();
+        switch (browser) {
+            case "firefox":
+            case "gecko":
+                webDriver = new FirefoxDriver();
+                break;
+
+            case "edge":
+            case "msedge":
+                webDriver = new EdgeDriver();
+                break;
+
+            default:
+                ChromeOptions options = new ChromeOptions();
+                if ("true".equalsIgnoreCase(System.getProperty("chrome.headless", "false"))) {
+                    options.addArguments("--headless=new");
+                }
+
+                // Selenium Manager will auto-download the correct ChromeDriver
+                webDriver = new ChromeDriver(options);
+        }
+    }
+
+    @After
+    public void afterScenario() {
+        if (webDriver != null) {
+            webDriver.quit();
+        }
+    }
+
+    public static WebDriver getDriver() {
+        return webDriver;
+    }
+}
