@@ -1,0 +1,12 @@
+@RunWith(CucumberWithSerenity.class)
+@CucumberOptions(
+    features = "src/test/resources/features",
+    glue = "your.step.definition.package",
+    plugin = {
+        "pretty",
+        "html:target/cucumber-reports",
+        "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"
+    },
+    tags = "@yourTag"
+)
+public class TestRunner {}
