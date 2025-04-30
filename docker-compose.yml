@@ -1,0 +1,77 @@
+version: '3.5'
+
+services:
+
+  gateway:
+    image: reportportal/service-gateway:5.7.10
+    container_name: rp_gateway
+    ports:
+      - "8090:8080"
+    depends_on:
+      - api
+    networks:
+      - rp_net
+
+  ui:
+    image: reportportal/service-ui:5.7.10
+    container_name: rp_ui
+    depends_on:
+      - gateway
+    networks:
+      - rp_net
+
+  api:
+    image: reportportal/service-api:5.7.10
+    container_name: rp_api
+    depends_on:
+      - postgres
+      - mongodb
+    networks:
+      - rp_net
+
+  index:
+    image: reportportal/service-index:5.7.10
+    container_name: rp_index
+    networks:
+      - rp_net
+
+  uat:
+    image: reportportal/service-authorization:5.7.10
+    container_name: rp_uauth
+    depends_on:
+      - postgres
+    networks:
+      - rp_net
+
+  jobs:
+    image: reportportal/service-jobs:5.7.10
+    container_name: rp_jobs
+    depends_on:
+      - rabbitmq
+    networks:
+      - rp_net
+
+  postgres:
+    image: postgres:12
+    container_name: rp_postgres
+    environment:
+      POSTGRES_USER: rpuser
+      POSTGRES_PASSWORD: rppass
+      POSTGRES_DB: reportportal
+    networks:
+      - rp_net
+
+  mongodb:
+    image: mongo:4.0
+    container_name: rp_mongodb
+    networks:
+      - rp_net
+
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    container_name: rp_rabbitmq
+    networks:
+      - rp_net
+
+networks:
+  rp_net:
